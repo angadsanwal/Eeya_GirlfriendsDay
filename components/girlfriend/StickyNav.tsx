@@ -41,7 +41,6 @@ export default function StickyNav({ onCustomize, onBack }: StickyNavProps) {
           >
            Make it yours
           </button>
-        )}
       </div>
     </header>
   )
