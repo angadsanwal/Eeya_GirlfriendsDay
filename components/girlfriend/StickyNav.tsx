@@ -34,13 +34,12 @@ export default function StickyNav({ onCustomize, onBack }: StickyNavProps) {
           className="text-gf-navy font-semibold text-xs text-center leading-tight flex-1 min-w-0"
         />
 
-        {/* Make it yours — admin only */}
-        {media.isAdmin && (
-          <button
-            onClick={onCustomize}
-            className="bg-gf-purple text-white text-xs font-semibold rounded-full px-3 py-1.5 hover:bg-purple-700 transition-colors flex-shrink-0 whitespace-nowrap"
+        {/* Make it yours */}
+        <button
+          onClick={onCustomize}
+          className="bg-gf-purple text-white text-xs font-semibold rounded-full px-3 py-1.5 hover:bg-purple-700 transition-colors flex-shrink-0 whitespace-nowrap"
           >
-            Make it yours
+           Make it yours
           </button>
         )}
       </div>
