@@ -47,6 +47,51 @@ export default function EditableText({ textKey, tag: Tag = 'span', className = '
   )
 }
 
+interface EditableInlineProps {
+  value: string
+  onChange: (v: string) => void
+  tag?: 'p' | 'span'
+  className?: string
+  style?: React.CSSProperties
+}
+
+// Same pattern as EditableText, but for values that don't live under a fixed
+// TextContent key (e.g. an item inside an array, like a coupon's title/note).
+export function EditableInline({ value, onChange, tag: Tag = 'span', className = '', style }: EditableInlineProps) {
+  const { media } = useMedia()
+  const ref = useRef<HTMLElement>(null)
+  const isAdmin = media.isAdmin
+
+  useEffect(() => {
+    if (ref.current && ref.current.textContent !== value) {
+      ref.current.textContent = value
+    }
+  }, [value])
+
+  if (!isAdmin) {
+    return <Tag className={className} style={style}>{value}</Tag>
+  }
+
+  return (
+    <Tag
+      ref={ref as React.RefObject<any>}
+      contentEditable
+      suppressContentEditableWarning
+      onClick={e => e.stopPropagation()}
+      className={`${className} outline-none cursor-text`}
+      style={{
+        ...style,
+        borderBottom: '1.5px dashed rgba(124,58,237,0.5)',
+        borderRadius: '2px',
+      }}
+      onBlur={e => onChange(e.currentTarget.textContent ?? '')}
+      spellCheck={false}
+    >
+      {value}
+    </Tag>
+  )
+}
+
 interface EditableBouquetReasonProps {
   index: number
   className?: string
