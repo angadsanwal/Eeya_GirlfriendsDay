@@ -8,17 +8,21 @@ import HeroSection from '@/components/girlfriend/HeroSection'
 import MomentsCarousel from '@/components/girlfriend/MomentsCarousel'
 import BouquetSection from '@/components/girlfriend/BouquetSection'
 import LetterSection from '@/components/girlfriend/LetterSection'
+import CouponsSection from '@/components/girlfriend/CouponsSection'
 import CustomizePanel from '@/components/girlfriend/CustomizePanel'
 import FloatingAudioToggle from '@/components/girlfriend/FloatingAudioToggle'
 
-// 0 = intro, 1 = hero, 2 = moments, 3 = bouquet, 4 = letter
-type SectionIndex = 0 | 1 | 2 | 3 | 4
+// 0 = intro, 1 = hero, 2 = moments, 3 = bouquet, 4 = letter, 5 = coupons
+type SectionIndex = 0 | 1 | 2 | 3 | 4 | 5
 
 export default function GirlfriendsDayPage() {
   const [section, setSection] = useState<SectionIndex>(0)
   const [customizeOpen, setCustomizeOpen] = useState(false)
   // Track exit direction for animation
   const [transitioning, setTransitioning] = useState(false)
+  // Remembers which section to return to when leaving the coupons page,
+  // since coupons can be reached from any section via the nav button.
+  const [prevSection, setPrevSection] = useState<SectionIndex>(1)
 
   const goTo = (next: SectionIndex) => {
     if (transitioning) return
@@ -28,6 +32,11 @@ export default function GirlfriendsDayPage() {
       setTransitioning(false)
       window.scrollTo({ top: 0, behavior: 'instant' })
     }, 400)
+  }
+
+  const goToCoupons = () => {
+    if (section !== 0 && section !== 5) setPrevSection(section)
+    goTo(5)
   }
 
   return (
@@ -51,7 +60,14 @@ export default function GirlfriendsDayPage() {
         >
           <StickyNav
             onCustomize={() => setCustomizeOpen(true)}
-            onBack={section > 1 ? () => goTo((section - 1) as SectionIndex) : undefined}
+            onCoupons={goToCoupons}
+            onBack={
+              section === 5
+                ? () => goTo(prevSection)
+                : section > 1
+                  ? () => goTo((section - 1) as SectionIndex)
+                  : undefined
+            }
           />
 
           {section === 1 && (
@@ -65,6 +81,9 @@ export default function GirlfriendsDayPage() {
           )}
           {section === 4 && (
             <LetterSection onReadAgain={() => goTo(0)} />
+          )}
+          {section === 5 && (
+            <CouponsSection />
           )}
         </div>
       )}
