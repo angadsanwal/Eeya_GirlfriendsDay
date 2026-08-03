@@ -32,7 +32,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="bg-gf-lavender">
+    <html lang="en" className="light bg-gf-lavender">
       <body className={`antialiased font-sans ${_dancingScript.variable} ${_nunito.variable}`}>
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
