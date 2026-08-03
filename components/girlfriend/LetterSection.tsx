@@ -88,7 +88,16 @@ export default function LetterSection({ onReadAgain }: LetterSectionProps) {
             {/* Video section */}
             {media.videoUrl && (
               <div className="mt-5 rounded-2xl overflow-hidden border border-purple-100">
-                <video src={media.videoUrl} controls className="w-full" aria-label="Our video" />
+                <video
+                  src={media.videoUrl}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  controls
+                  className="w-full"
+                  aria-label="Our video"
+                />
               </div>
             )}
 
