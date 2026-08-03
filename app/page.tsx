@@ -64,10 +64,7 @@ function GirlfriendsDayContent() {
 
       {/* ── Intro ── */}
       {section === 0 && (
-        <div>
-          <IntroScreen onBegin={() => { setSection(1); window.scrollTo({ top: 0, behavior: 'instant' }) }} />
-          <AdminLink onClick={openAdmin} />
-        </div>
+        <IntroScreen onBegin={() => { setSection(1); window.scrollTo({ top: 0, behavior: 'instant' }) }} />
       )}
 
       {/* ── Sections 1-4: each full-screen with fade-slide ── */}
@@ -107,10 +104,10 @@ function GirlfriendsDayContent() {
           {section === 5 && (
             <CouponsSection />
           )}
-
-          <AdminLink onClick={openAdmin} />
         </div>
       )}
+
+      {section !== 0 && <AdminLink onClick={openAdmin} />}
 
       <CustomizePanel open={customizeOpen} onClose={() => setCustomizeOpen(false)} />
 
@@ -130,11 +127,11 @@ function GirlfriendsDayContent() {
   )
 }
 
-// Sits in normal document flow at the very bottom of each page's content —
-// not fixed on screen, so it never floats over anything while scrolling.
+// Sits in normal document flow, once, after all page content — never
+// duplicated, and given its own stacking layer so it's always clickable.
 function AdminLink({ onClick }: { onClick: () => void }) {
   return (
-    <div className="w-full flex justify-center py-6">
+    <div className="relative z-10 w-full flex justify-center py-6">
       <button
         onClick={onClick}
         className="text-[10px] text-gf-navy/25 hover:text-gf-navy/50 transition-colors px-2 py-1"
