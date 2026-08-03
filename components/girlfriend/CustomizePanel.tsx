@@ -12,7 +12,7 @@ interface CustomizePanelProps {
 export default function CustomizePanel({ open, onClose }: CustomizePanelProps) {
   const {
     media, setAvatarUrl, setSong, setAlbumPhoto, setStickerImage,
-    setVideoUrl, setMomentCaption, setText, setBouquetReason, setIsAdmin,
+    setVideoUrl, setMomentCaption, setText, setBouquetReason, setIsAdmin, logout,
   } = useMedia()
 
   const [tab, setTab] = useState<'media' | 'text'>('media')
@@ -46,11 +46,19 @@ export default function CustomizePanel({ open, onClose }: CustomizePanelProps) {
             <h2 className="font-bold text-gf-navy text-base">Make it yours</h2>
             <p className="text-gf-navy/50 text-xs mt-0.5">Admin mode — only you see this</p>
           </div>
-          <button onClick={onClose} className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors" aria-label="Close">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-              <path d="M2 2l10 10M12 2L2 12" stroke="#374151" strokeWidth="2" strokeLinecap="round" />
-            </svg>
-          </button>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <button
+              onClick={() => { logout(); onClose() }}
+              className="text-xs font-semibold text-gray-400 hover:text-red-500 transition-colors px-2 py-1"
+            >
+              Log out
+            </button>
+            <button onClick={onClose} className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors" aria-label="Close">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path d="M2 2l10 10M12 2L2 12" stroke="#374151" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* Admin toggle */}
