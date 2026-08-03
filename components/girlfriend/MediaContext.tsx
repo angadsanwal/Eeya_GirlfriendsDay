@@ -128,6 +128,7 @@ interface MediaState {
   momentCaptions: string[]
   texts: TextContent
   isAdmin: boolean
+  isAuthenticated: boolean
   loadingSlots: Set<string>
   redeemedCoupons: Record<string, boolean>
 }
@@ -148,10 +149,14 @@ interface MediaContextType {
   setIsAdmin: (v: boolean) => void
   setCouponField: (index: number, field: 'title' | 'note', value: string) => void
   toggleCoupon: (id: string, redeemed: boolean) => void
+  login: (password: string) => boolean
+  logout: () => void
 }
 
 const BUCKET = 'eeya-media'
 const TABLE = 'eeya_birthday'
+const ADMIN_PASSWORD = 'angad'
+const AUTH_STORAGE_KEY = 'eeya_admin_authed'
 
 const MediaContext = createContext<MediaContextType | null>(null)
 
@@ -169,9 +174,18 @@ export function MediaProvider({ children }: { children: ReactNode }) {
     momentCaptions: [...DEFAULT_CAPTIONS],
     texts: { ...DEFAULT_TEXTS },
     isAdmin: false,
+    isAuthenticated: false,
     loadingSlots: new Set(),
     redeemedCoupons: {},
   })
+
+  // Restore admin login from this browser, if it was unlocked before
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    if (window.localStorage.getItem(AUTH_STORAGE_KEY) === 'true') {
+      setMedia(prev => ({ ...prev, isAuthenticated: true }))
+    }
+  }, [])
 
   // Load saved content from Supabase on first mount
   useEffect(() => {
@@ -316,6 +330,18 @@ export function MediaProvider({ children }: { children: ReactNode }) {
 
   const setIsAdmin = (v: boolean) => setMedia(prev => ({ ...prev, isAdmin: v }))
 
+  const login = (password: string): boolean => {
+    if (password !== ADMIN_PASSWORD) return false
+    if (typeof window !== 'undefined') window.localStorage.setItem(AUTH_STORAGE_KEY, 'true')
+    setMedia(prev => ({ ...prev, isAuthenticated: true }))
+    return true
+  }
+
+  const logout = () => {
+    if (typeof window !== 'undefined') window.localStorage.removeItem(AUTH_STORAGE_KEY)
+    setMedia(prev => ({ ...prev, isAuthenticated: false, isAdmin: false }))
+  }
+
   const setCouponField = (index: number, field: 'title' | 'note', value: string) =>
     setMedia(prev => {
       const coupons = [...prev.texts.coupons]
@@ -347,7 +373,7 @@ export function MediaProvider({ children }: { children: ReactNode }) {
       media, audioRef, isPlaying, setIsPlaying,
       setAvatarUrl, setSong, setAlbumPhoto, setStickerImage,
       setVideoUrl, setMomentCaption, setText, setBouquetReason, setIsAdmin,
-      setCouponField, toggleCoupon,
+      setCouponField, toggleCoupon, login, logout,
     }}>
       <audio ref={audioRef} loop />
       {children}
