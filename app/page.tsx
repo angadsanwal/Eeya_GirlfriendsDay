@@ -64,7 +64,10 @@ function GirlfriendsDayContent() {
 
       {/* ── Intro ── */}
       {section === 0 && (
-        <IntroScreen onBegin={() => { setSection(1); window.scrollTo({ top: 0, behavior: 'instant' }) }} />
+        <div>
+          <IntroScreen onBegin={() => { setSection(1); window.scrollTo({ top: 0, behavior: 'instant' }) }} />
+          <AdminLink onClick={openAdmin} />
+        </div>
       )}
 
       {/* ── Sections 1-4: each full-screen with fade-slide ── */}
@@ -104,6 +107,8 @@ function GirlfriendsDayContent() {
           {section === 5 && (
             <CouponsSection />
           )}
+
+          <AdminLink onClick={openAdmin} />
         </div>
       )}
 
@@ -115,14 +120,6 @@ function GirlfriendsDayContent() {
         onSuccess={() => { setLoginOpen(false); setCustomizeOpen(true) }}
       />
 
-      {/* Tiny, easy-to-miss link to reach the admin panel */}
-      <button
-        onClick={openAdmin}
-        className="fixed bottom-1.5 left-1/2 -translate-x-1/2 z-40 text-[10px] text-gf-navy/25 hover:text-gf-navy/50 transition-colors px-2 py-1"
-      >
-        admin
-      </button>
-
       <style>{`
         @keyframes sectionIn {
           from { opacity: 0; transform: translateY(32px); }
@@ -130,5 +127,20 @@ function GirlfriendsDayContent() {
         }
       `}</style>
     </>
+  )
+}
+
+// Sits in normal document flow at the very bottom of each page's content —
+// not fixed on screen, so it never floats over anything while scrolling.
+function AdminLink({ onClick }: { onClick: () => void }) {
+  return (
+    <div className="w-full flex justify-center py-6">
+      <button
+        onClick={onClick}
+        className="text-[10px] text-gf-navy/25 hover:text-gf-navy/50 transition-colors px-2 py-1"
+      >
+        admin
+      </button>
+    </div>
   )
 }
