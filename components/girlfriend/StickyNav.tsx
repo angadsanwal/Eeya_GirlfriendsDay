@@ -46,13 +46,15 @@ export default function StickyNav({ onCustomize, onCoupons, onBack }: StickyNavP
             🎟️
           </button>
 
-          {/* Make it yours */}
-          <button
-            onClick={onCustomize}
-            className="bg-gf-purple text-white text-xs font-semibold rounded-full px-3 py-1.5 hover:bg-purple-700 transition-colors whitespace-nowrap"
-          >
-            Make it yours
-          </button>
+          {/* Make it yours — only visible once logged in as admin */}
+          {media.isAuthenticated && (
+            <button
+              onClick={onCustomize}
+              className="bg-gf-purple text-white text-xs font-semibold rounded-full px-3 py-1.5 hover:bg-purple-700 transition-colors whitespace-nowrap"
+            >
+              Make it yours
+            </button>
+          )}
         </div>
       </div>
     </header>
