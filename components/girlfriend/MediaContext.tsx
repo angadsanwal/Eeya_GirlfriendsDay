@@ -3,6 +3,13 @@
 import { createContext, useContext, useState, useRef, useEffect, type ReactNode, type RefObject } from 'react'
 import { supabase } from '@/lib/supabase'
 
+export interface Coupon {
+  id: string
+  emoji: string
+  title: string
+  note: string
+}
+
 export interface TextContent {
   navTitle: string
   heroBadge: string
@@ -32,6 +39,10 @@ export interface TextContent {
   introCardSubtitle: string
   introCardSigned: string
   introTap: string
+  couponsBadge: string
+  couponsTitle: string
+  couponsSubtitle: string
+  coupons: Coupon[]
 }
 
 const DEFAULT_TEXTS: TextContent = {
@@ -70,6 +81,35 @@ const DEFAULT_TEXTS: TextContent = {
   introCardSubtitle: "happy girlfriend's day, my love",
   introCardSigned: 'yours, always',
   introTap: 'TAP ANYWHERE TO BEGIN',
+  couponsBadge: 'EST. WITH LOVE',
+  couponsTitle: 'Birthday Coupon Vault',
+  couponsSubtitle: 'redeem whenever your heart desires',
+  coupons: [
+    { id: 'BDAY-001', emoji: '🎀', title: '20 Kisses Coupon 💋', note: 'Emotional damages not covered under warranty.' },
+    { id: 'BDAY-002', emoji: '🙅', title: 'One Screen-Free Night, Just Us', note: 'For certified partner use only.' },
+    { id: 'BDAY-003', emoji: '🤗', title: '10-Minute Hug Session', note: 'Redeemable subject to availability.' },
+    { id: 'BDAY-004', emoji: '😴', title: 'Cuddle & Nap Together Pass ☁️', note: 'Naps guaranteed to be too short.' },
+    { id: 'BDAY-005', emoji: '💆', title: 'Full Body Massage', note: 'Unauthorized duplication strictly prohibited.' },
+    { id: 'BDAY-006', emoji: '💇', title: 'Head Massage + Hair Oil Champi', note: 'Use before I fall asleep first.' },
+    { id: 'BDAY-007', emoji: '📸', title: 'One Cute Picture, No Questions Asked', note: 'Valid under birthday compliance standards.' },
+    { id: 'BDAY-008', emoji: '🧖', title: 'Face Massage & Skincare Night 🧴', note: 'High-priority romantic infrastructure enabled.' },
+    { id: 'BDAY-009', emoji: '🍳', title: "I'll Cook Your Favourite Meal 🍰", note: "Chef's mood may vary." },
+    { id: 'BDAY-010', emoji: '🎒', title: 'One Mini Adventure Together 🚇', note: 'Excessive smugness prohibited.' },
+    { id: 'BDAY-011', emoji: '⚠️', title: 'One "Yes Hour"', note: 'Non-transferable birthday asset.' },
+    { id: 'BDAY-012', emoji: '💌', title: 'I Plan the Entire Date Day', note: 'Redeemable subject to my planning skills.' },
+    { id: 'BDAY-013', emoji: '📞', title: 'Cute Video Call Coupon 💖', note: 'Battery percentage not guaranteed.' },
+    { id: 'BDAY-014', emoji: '👑', title: 'Dedicated Princess Day', note: 'Crown provided. Attitude optional.' },
+    { id: 'BDAY-015', emoji: '🎧', title: 'Mandatory Playlist Takeover', note: 'You listen, no skipping allowed.' },
+    { id: 'BDAY-016', emoji: '🛍️', title: 'One Guilt-Free Shopping Trip', note: 'Budget subject to negotiation.' },
+    { id: 'BDAY-017', emoji: '🍿', title: 'Movie Night, Your Pick', note: "Even if it's the one I hate." },
+    { id: 'BDAY-018', emoji: '🧁', title: 'Dessert of Your Choice, On Me', note: 'Sugar rush not included in refund policy.' },
+    { id: 'BDAY-019', emoji: '🧹', title: 'Skip-a-Chore Pass', note: 'Redeem before I change my mind.' },
+    { id: 'BDAY-020', emoji: '🙊', title: 'One Free Pass on an Argument', note: 'Terms and conditions apply, mostly to me.' },
+    { id: 'BDAY-021', emoji: '💃', title: 'A Dance in the Kitchen', note: 'Off-key singing guaranteed.' },
+    { id: 'BDAY-022', emoji: '🎁', title: 'One Surprise, Details Withheld', note: 'No hints. No bribes.' },
+    { id: 'BDAY-023', emoji: '🌙', title: "Late Night Talk Till We're Sleepy", note: 'Deep topics only, no small talk.' },
+    { id: 'BDAY-024', emoji: '💍', title: 'A Lifetime of More Birthdays Together', note: 'Terms: forever. No expiry date.' },
+  ],
 }
 
 const DEFAULT_CAPTIONS = [
@@ -89,6 +129,7 @@ interface MediaState {
   texts: TextContent
   isAdmin: boolean
   loadingSlots: Set<string>
+  redeemedCoupons: Record<string, boolean>
 }
 
 interface MediaContextType {
@@ -105,6 +146,8 @@ interface MediaContextType {
   setText: (key: keyof TextContent, value: string) => void
   setBouquetReason: (index: number, value: string) => void
   setIsAdmin: (v: boolean) => void
+  setCouponField: (index: number, field: 'title' | 'note', value: string) => void
+  toggleCoupon: (id: string, redeemed: boolean) => void
 }
 
 const BUCKET = 'eeya-media'
@@ -127,6 +170,7 @@ export function MediaProvider({ children }: { children: ReactNode }) {
     texts: { ...DEFAULT_TEXTS },
     isAdmin: false,
     loadingSlots: new Set(),
+    redeemedCoupons: {},
   })
 
   // Load saved content from Supabase on first mount
@@ -140,6 +184,13 @@ export function MediaProvider({ children }: { children: ReactNode }) {
       const bySlot: Record<string, any> = {}
       data.forEach(row => { bySlot[row.slot_key] = row })
 
+      const redeemedCoupons: Record<string, boolean> = {}
+      data.forEach(row => {
+        if (row.slot_key.startsWith('coupon_')) {
+          redeemedCoupons[row.slot_key.slice('coupon_'.length)] = true
+        }
+      })
+
       setMedia(prev => ({
         ...prev,
         avatarUrl: bySlot['avatar']?.file_url ?? null,
@@ -148,6 +199,7 @@ export function MediaProvider({ children }: { children: ReactNode }) {
         videoUrl: bySlot['video']?.file_url ?? null,
         albumPhotos: [0, 1, 2].map(i => bySlot[`album_${i}`]?.file_url ?? null),
         stickerImages: [0, 1, 2].map(i => bySlot[`sticker_${i}`]?.file_url ?? null),
+        redeemedCoupons,
       }))
     }
     loadSlots()
@@ -264,11 +316,38 @@ export function MediaProvider({ children }: { children: ReactNode }) {
 
   const setIsAdmin = (v: boolean) => setMedia(prev => ({ ...prev, isAdmin: v }))
 
+  const setCouponField = (index: number, field: 'title' | 'note', value: string) =>
+    setMedia(prev => {
+      const coupons = [...prev.texts.coupons]
+      coupons[index] = { ...coupons[index], [field]: value }
+      return { ...prev, texts: { ...prev.texts, coupons } }
+    })
+
+  // Redeemed state is the one thing on this page that persists to Supabase,
+  // so it survives refreshes on any device — same guarantee as the photos.
+  const toggleCoupon = (id: string, redeemed: boolean) => {
+    setMedia(prev => ({ ...prev, redeemedCoupons: { ...prev.redeemedCoupons, [id]: redeemed } }))
+    ;(async () => {
+      try {
+        if (redeemed) {
+          await supabase
+            .from(TABLE)
+            .upsert({ slot_key: `coupon_${id}`, file_url: 'redeemed', file_type: 'coupon', file_name: id }, { onConflict: 'slot_key' })
+        } else {
+          await supabase.from(TABLE).delete().eq('slot_key', `coupon_${id}`)
+        }
+      } catch (err) {
+        console.error(`Failed to sync coupon ${id}:`, err)
+      }
+    })()
+  }
+
   return (
     <MediaContext.Provider value={{
       media, audioRef, isPlaying, setIsPlaying,
       setAvatarUrl, setSong, setAlbumPhoto, setStickerImage,
       setVideoUrl, setMomentCaption, setText, setBouquetReason, setIsAdmin,
+      setCouponField, toggleCoupon,
     }}>
       <audio ref={audioRef} loop />
       {children}
