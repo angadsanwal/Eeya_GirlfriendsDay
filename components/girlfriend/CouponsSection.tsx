@@ -1,12 +1,11 @@
 'use client'
 
 import { useMedia } from './MediaContext'
-import type { Coupon } from './MediaContext'
-import { EditableInline } from './EditableText'
+import { Coupon } from './MediaContext'
 import EditableText from './EditableText'
 
 export default function CouponsSection() {
-  const { media, toggleCoupon, setCouponField } = useMedia()
+  const { media, toggleCoupon } = useMedia()
   const coupons = media.texts.coupons
 
   const redeemedCount = coupons.filter(c => media.redeemedCoupons[c.id]).length
@@ -84,15 +83,12 @@ export default function CouponsSection() {
         <div className="flex flex-col gap-3 mt-6">
           {ordered.map(coupon => {
             const isRedeemed = !!media.redeemedCoupons[coupon.id]
-            const originalIndex = coupons.findIndex(c => c.id === coupon.id)
             return (
               <CouponCard
                 key={coupon.id}
                 coupon={coupon}
                 redeemed={isRedeemed}
                 onToggle={() => toggleCoupon(coupon.id, !isRedeemed)}
-                onEditTitle={v => setCouponField(originalIndex, 'title', v)}
-                onEditNote={v => setCouponField(originalIndex, 'note', v)}
               />
             )
           })}
@@ -112,14 +108,10 @@ function CouponCard({
   coupon,
   redeemed,
   onToggle,
-  onEditTitle,
-  onEditNote,
 }: {
   coupon: Coupon
   redeemed: boolean
   onToggle: () => void
-  onEditTitle: (v: string) => void
-  onEditNote: (v: string) => void
 }) {
   return (
     <button
@@ -147,20 +139,14 @@ function CouponCard({
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2 flex-wrap">
           <span className="text-lg leading-none">{coupon.emoji}</span>
-          <EditableInline
-            value={coupon.title}
-            onChange={onEditTitle}
-            tag="span"
-            className={`font-bold text-sm ${redeemed ? 'line-through text-gf-navy/40' : 'text-gf-navy'}`}
-          />
+          <span className={`font-bold text-sm ${redeemed ? 'line-through text-gf-navy/40' : 'text-gf-navy'}`}>
+            {coupon.title}
+          </span>
         </div>
         <p className="text-[10px] font-semibold tracking-widest text-gf-purple/50 uppercase mt-1">{coupon.id}</p>
-        <EditableInline
-          value={coupon.note}
-          onChange={onEditNote}
-          tag="p"
-          className="text-xs italic text-gf-navy/50 mt-1.5 block"
-        />
+        {coupon.note && (
+          <p className="text-xs italic text-gf-navy/50 mt-1.5">{coupon.note}</p>
+        )}
       </div>
     </button>
   )
