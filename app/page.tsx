@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { MediaProvider } from '@/components/girlfriend/MediaContext'
+import { MediaProvider, useMedia } from '@/components/girlfriend/MediaContext'
 import IntroScreen from '@/components/girlfriend/IntroScreen'
 import StickyNav from '@/components/girlfriend/StickyNav'
 import HeroSection from '@/components/girlfriend/HeroSection'
@@ -11,13 +11,24 @@ import LetterSection from '@/components/girlfriend/LetterSection'
 import CouponsSection from '@/components/girlfriend/CouponsSection'
 import CustomizePanel from '@/components/girlfriend/CustomizePanel'
 import FloatingAudioToggle from '@/components/girlfriend/FloatingAudioToggle'
+import AdminLogin from '@/components/girlfriend/AdminLogin'
 
 // 0 = intro, 1 = hero, 2 = moments, 3 = bouquet, 4 = letter, 5 = coupons
 type SectionIndex = 0 | 1 | 2 | 3 | 4 | 5
 
 export default function GirlfriendsDayPage() {
+  return (
+    <MediaProvider>
+      <GirlfriendsDayContent />
+    </MediaProvider>
+  )
+}
+
+function GirlfriendsDayContent() {
+  const { media } = useMedia()
   const [section, setSection] = useState<SectionIndex>(0)
   const [customizeOpen, setCustomizeOpen] = useState(false)
+  const [loginOpen, setLoginOpen] = useState(false)
   // Track exit direction for animation
   const [transitioning, setTransitioning] = useState(false)
   // Remembers which section to return to when leaving the coupons page,
@@ -39,8 +50,16 @@ export default function GirlfriendsDayPage() {
     goTo(5)
   }
 
+  const openAdmin = () => {
+    if (media.isAuthenticated) {
+      setCustomizeOpen(true)
+    } else {
+      setLoginOpen(true)
+    }
+  }
+
   return (
-    <MediaProvider>
+    <>
       <FloatingAudioToggle />
 
       {/* ── Intro ── */}
@@ -90,12 +109,26 @@ export default function GirlfriendsDayPage() {
 
       <CustomizePanel open={customizeOpen} onClose={() => setCustomizeOpen(false)} />
 
+      <AdminLogin
+        open={loginOpen}
+        onClose={() => setLoginOpen(false)}
+        onSuccess={() => { setLoginOpen(false); setCustomizeOpen(true) }}
+      />
+
+      {/* Tiny, easy-to-miss link to reach the admin panel */}
+      <button
+        onClick={openAdmin}
+        className="fixed bottom-1.5 left-1/2 -translate-x-1/2 z-40 text-[10px] text-gf-navy/25 hover:text-gf-navy/50 transition-colors px-2 py-1"
+      >
+        admin
+      </button>
+
       <style>{`
         @keyframes sectionIn {
           from { opacity: 0; transform: translateY(32px); }
           to   { opacity: 1; transform: translateY(0); }
         }
       `}</style>
-    </MediaProvider>
+    </>
   )
 }
