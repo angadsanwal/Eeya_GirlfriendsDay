@@ -5,10 +5,11 @@ import EditableText from './EditableText'
 
 interface StickyNavProps {
   onCustomize: () => void
+  onCoupons: () => void
   onBack?: () => void
 }
 
-export default function StickyNav({ onCustomize, onBack }: StickyNavProps) {
+export default function StickyNav({ onCustomize, onCoupons, onBack }: StickyNavProps) {
   const { media } = useMedia()
 
   return (
@@ -34,13 +35,25 @@ export default function StickyNav({ onCustomize, onBack }: StickyNavProps) {
           className="text-gf-navy font-semibold text-xs text-center leading-tight flex-1 min-w-0"
         />
 
-        {/* Make it yours */}
-        <button
-          onClick={onCustomize}
-          className="bg-gf-purple text-white text-xs font-semibold rounded-full px-3 py-1.5 hover:bg-purple-700 transition-colors flex-shrink-0 whitespace-nowrap"
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          {/* Birthday coupons */}
+          <button
+            onClick={onCoupons}
+            className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 text-sm hover:bg-gray-50 transition-colors flex-shrink-0"
+            aria-label="Birthday Coupons"
+            title="Birthday Coupons"
           >
-           Make it yours
+            🎟️
           </button>
+
+          {/* Make it yours */}
+          <button
+            onClick={onCustomize}
+            className="bg-gf-purple text-white text-xs font-semibold rounded-full px-3 py-1.5 hover:bg-purple-700 transition-colors whitespace-nowrap"
+          >
+            Make it yours
+          </button>
+        </div>
       </div>
     </header>
   )
