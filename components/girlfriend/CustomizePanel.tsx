@@ -23,10 +23,10 @@ export default function CustomizePanel({ open, onClose }: CustomizePanelProps) {
   const albumInputRefs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)]
   const stickerInputRefs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)]
 
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>, handler: (url: string | null, name?: string | null) => void) => {
+  const handleFile = (e: React.ChangeEvent<HTMLInputElement>, handler: (file: File | null) => void) => {
     const file = e.target.files?.[0]
     if (!file) return
-    handler(URL.createObjectURL(file), file.name.replace(/\.[^/.]+$/, ''))
+    handler(file)
   }
 
   if (!open) return null
@@ -96,7 +96,7 @@ export default function CustomizePanel({ open, onClose }: CustomizePanelProps) {
                 <SectionLabel label="Profile photo" />
                 <p className="text-xs text-gray-400 mb-3">Replaces the avatar at the top.</p>
                 <UploadSlot url={media.avatarUrl} label="Upload photo" accept="image/*" inputRef={avatarInputRef}
-                  onClear={() => setAvatarUrl(null)} onChange={e => handleFile(e, url => setAvatarUrl(url))} square />
+                  onClear={() => setAvatarUrl(null)} onChange={e => handleFile(e, setAvatarUrl)} square />
               </section>
 
               {/* Song */}
@@ -104,14 +104,14 @@ export default function CustomizePanel({ open, onClose }: CustomizePanelProps) {
                 <SectionLabel label="Our Song" />
                 <p className="text-xs text-gray-400 mb-3">Upload an audio file — plays across all sections.</p>
                 <input ref={songInputRef} type="file" accept="audio/*" className="hidden"
-                  onChange={e => handleFile(e, (url, name) => setSong(url, name ?? null))} />
+                  onChange={e => handleFile(e, setSong)} />
                 {media.songUrl ? (
                   <div className="flex items-center gap-3 bg-gf-lavender rounded-xl px-4 py-3">
                     <div className="w-8 h-8 bg-gf-purple rounded-full flex items-center justify-center flex-shrink-0">
                       <svg width="12" height="12" viewBox="0 0 12 12" fill="white" aria-hidden="true"><path d="M2 1.5L10 6L2 10.5V1.5Z" /></svg>
                     </div>
                     <p className="text-gf-navy text-sm font-medium truncate flex-1">{media.songName ?? 'Song'}</p>
-                    <button onClick={() => setSong(null, null)} className="text-gray-400 hover:text-red-500 text-xs transition-colors">Remove</button>
+                    <button onClick={() => setSong(null)} className="text-gray-400 hover:text-red-500 text-xs transition-colors">Remove</button>
                   </div>
                 ) : (
                   <button onClick={() => songInputRef.current?.click()}
@@ -126,7 +126,7 @@ export default function CustomizePanel({ open, onClose }: CustomizePanelProps) {
                 <SectionLabel label="Our Video (optional)" />
                 <p className="text-xs text-gray-400 mb-3">Shown inside the letter section.</p>
                 <input ref={videoInputRef} type="file" accept="video/*" className="hidden"
-                  onChange={e => handleFile(e, url => setVideoUrl(url))} />
+                  onChange={e => handleFile(e, setVideoUrl)} />
                 {media.videoUrl ? (
                   <div className="rounded-xl overflow-hidden border border-purple-100">
                     <video src={media.videoUrl} className="w-full max-h-40 object-cover" />
@@ -150,10 +150,10 @@ export default function CustomizePanel({ open, onClose }: CustomizePanelProps) {
                   {[0, 1, 2].map(i => (
                     <div key={i}>
                       <input ref={albumInputRefs[i]} type="file" accept="image/*" className="hidden"
-                        onChange={e => handleFile(e, url => setAlbumPhoto(i, url))} />
+                        onChange={e => handleFile(e, file => setAlbumPhoto(i, file))} />
                       <UploadSlot url={media.albumPhotos[i]} label={`Photo ${i + 1}`} accept="image/*"
                         inputRef={albumInputRefs[i]} onClear={() => setAlbumPhoto(i, null)}
-                        onChange={e => handleFile(e, url => setAlbumPhoto(i, url))} square />
+                        onChange={e => handleFile(e, file => setAlbumPhoto(i, file))} square />
                     </div>
                   ))}
                 </div>
@@ -178,10 +178,10 @@ export default function CustomizePanel({ open, onClose }: CustomizePanelProps) {
                   {[0, 1, 2].map(i => (
                     <div key={i}>
                       <input ref={stickerInputRefs[i]} type="file" accept="image/*" className="hidden"
-                        onChange={e => handleFile(e, url => setStickerImage(i, url))} />
+                        onChange={e => handleFile(e, file => setStickerImage(i, file))} />
                       <UploadSlot url={media.stickerImages[i]} label={`Sticker ${i + 1}`} accept="image/*"
                         inputRef={stickerInputRefs[i]} onClear={() => setStickerImage(i, null)}
-                        onChange={e => handleFile(e, url => setStickerImage(i, url))} square />
+                        onChange={e => handleFile(e, file => setStickerImage(i, file))} square />
                     </div>
                   ))}
                 </div>
