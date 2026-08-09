@@ -47,10 +47,10 @@ export interface TextContent {
 
 const DEFAULT_TEXTS: TextContent = {
   navTitle: 'only and only for my love',
-  heroBadge: 'FOR MY FAVOURITE PERSON',
-  heroTitle: "Happy Girlfriend's Day",
-  heroSubtitle: 'for you, always',
-  heroBody: "Today is all about you. I built this tiny corner of the internet to say what I don't say often enough — that you make ordinary days feel like the good kind of story. Stay a while, my love.",
+  heroBadge: 'FOR MY FAVOURITE GIRL',
+  heroTitle: "Happy Birthday, my love",
+  heroSubtitle: 'yours, always',
+  heroBody: "Today is all about you. I wanted to make you something that wasn’t just another birthday message, something you could come back to whenever you wanted. Happy birthday, my love. I’m so lucky I get to call you mine.",
   heroCta: 'SEE OUR LITTLE ALBUM',
   momentsBadge: 'OUR MOMENTS',
   momentsTitle: 'us, in a few frames',
