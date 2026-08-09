@@ -113,9 +113,9 @@ const DEFAULT_TEXTS: TextContent = {
 }
 
 const DEFAULT_CAPTIONS = [
-  'the day I realised you were my favourite hello.',
-  'every quiet moment with you is my favourite kind.',
-  "I'd choose this — us, exactly like this — every time.",
+  'the time you started entering my heart.',
+  'oh god, i know what LOVE is',
+  "my favourite present, my favourite future",
 ]
 
 interface MediaState {
