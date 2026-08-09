@@ -59,7 +59,7 @@ export default function SongPlayer() {
       </div>
 
       <div className="flex-1 min-w-0">
-        <p className="font-bold text-gf-navy text-sm leading-tight">Our Song</p>
+        <p className="font-bold text-gf-navy text-sm leading-tight">a song for you</p>
         <p className="text-gf-purple text-xs uppercase tracking-wider truncate mt-0.5">
           {media.songName ? media.songName : "A TRACK THAT'S JUST FOR US..."}
         </p>
