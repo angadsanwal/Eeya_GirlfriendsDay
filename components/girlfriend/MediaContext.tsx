@@ -103,10 +103,10 @@ const DEFAULT_TEXTS: TextContent = {
     { id: 'BDAY-016', emoji: '🛍️', title: 'One Guilt-Free Shopping Trip', note: 'Budget subject to negotiation.' },
     { id: 'BDAY-017', emoji: '🍿', title: 'Movie Night, Your Pick', note: "Even if it's the one I hate." },
     { id: 'BDAY-018', emoji: '🧁', title: 'Dessert of Your Choice, On Me', note: 'Sugar rush not included in refund policy.' },
-    { id: 'BDAY-020', emoji: '🙊', title: 'One Free Pass on an Argument', note: 'Terms and conditions apply, mostly to me.' },
-    { id: 'BDAY-021', emoji: '💃', title: 'I Dance for you', note: 'dont have high expectations' },
-    { id: 'BDAY-023', emoji: '🌙', title: "Late Night Talk Till We're Sleepy", note: 'Deep topics only, no small talk.' },
-    { id: 'BDAY-024', emoji: '💍', title: 'A Lifetime of More Birthdays Together', note: 'Terms: forever. No expiry date.' },
+    { id: 'BDAY-019', emoji: '🙊', title: 'One Free Pass on an Argument', note: 'Terms and conditions apply, mostly to me.' },
+    { id: 'BDAY-020', emoji: '💃', title: 'I Dance for you', note: 'dont have high expectations' },
+    { id: 'BDAY-021', emoji: '🌙', title: "Late Night Talk Till We're Sleepy", note: 'Deep topics only, no small talk.' },
+    { id: 'BDAY-022', emoji: '💍', title: 'A Lifetime of More Birthdays Together', note: 'Terms: forever. No expiry date.' },
   ],
 }
 
