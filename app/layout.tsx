@@ -16,8 +16,8 @@ const _nunito = Nunito({
 })
 
 export const metadata: Metadata = {
-  title: "Happy Girlfriend's Day, Eeya",
-  description: 'A little world made just for you.',
+  title: "Shhhhh 🤫",
+  description: 'A little world made just for eeya.',
   generator: 'v0.app',
 }
 
